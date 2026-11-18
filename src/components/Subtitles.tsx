@@ -14,32 +14,35 @@ export const Subtitles: React.FC<Props> = ({ segments, seed = 1 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
+  // Cari segmen aktif
   const activeIndex = segments.findIndex(
     (s) => frame >= s.startFrame && frame <= s.endFrame
   );
   if (activeIndex === -1) return null;
 
+  // Segmen 0 sudah ditangani oleh HookHeadline khusus di tengah layar
+  if (activeIndex === 0) return null;
+
   const active = segments[activeIndex];
-  const isHook = activeIndex === 0;
   const localFrame = frame - active.startFrame;
   const totalDur = Math.max(1, active.endFrame - active.startFrame);
 
-  // Animasi masuk kontainer subtitle (spring pop)
+  // Animasi masuk kontainer (pop spring)
   const panelScale = spring({
     frame: localFrame,
     fps,
-    config: { damping: 13, stiffness: 150 },
+    config: { damping: 12, stiffness: 180 },
   });
 
-  // Animasi fade-out di akhir segmen
+  // Animasi fade out
   const panelOpacity = interpolate(
     localFrame,
-    [totalDur - 6, totalDur],
+    [totalDur - 5, totalDur],
     [1, 0],
     { extrapolateLeft: "clamp", extrapolateRight: "clamp" }
   );
 
-  // Progress kata per kata
+  // Progress pembacaan kata
   const wordProgress = interpolate(
     localFrame,
     [0, totalDur * 0.9],
@@ -56,7 +59,7 @@ export const Subtitles: React.FC<Props> = ({ segments, seed = 1 }) => {
     <div
       style={{
         position: "absolute",
-        bottom: 150,
+        bottom: 180,
         left: 0,
         right: 0,
         display: "flex",
@@ -66,63 +69,31 @@ export const Subtitles: React.FC<Props> = ({ segments, seed = 1 }) => {
         opacity: panelOpacity,
         transform: `scale(${panelScale})`,
         pointerEvents: "none",
-        zIndex: 10,
+        zIndex: 15,
+        padding: "0 20px",
       }}
     >
-      {/* Hook Badge di segmen awal (detik 0-3) */}
-      {isHook && (
-        <div
-          style={{
-            marginBottom: 12,
-            background: `linear-gradient(90deg, ${THEME.accent}, ${THEME.primary})`,
-            padding: "4px 18px",
-            borderRadius: 20,
-            color: "#000",
-            fontSize: 16,
-            fontWeight: 900,
-            fontFamily: FONT.heading,
-            letterSpacing: 1.5,
-            boxShadow: `0 3px 14px ${THEME.accent}80`,
-            transform: `scale(${spring({ frame: localFrame, fps, config: { damping: 10 } })})`,
-          }}
-        >
-          {active.keyword ? `🔥 ${active.keyword.toUpperCase()}` : "🔥 WAJIB TAHU!"}
-        </div>
-      )}
-
-      {/* Kontainer Kapsul Kaca Subtitle */}
       <div
         style={{
-          background: THEME.glass,
-          backdropFilter: `blur(${THEME.glassBlur}px)`,
-          WebkitBackdropFilter: `blur(${THEME.glassBlur}px)`,
-          border: `1.5px solid ${THEME.glassBorder}`,
-          borderRadius: 20,
-          padding: "16px 26px",
-          maxWidth: "88%",
           display: "flex",
           flexWrap: "wrap",
           justifyContent: "center",
-          gap: "6px 10px",
-          boxShadow: "0 8px 30px rgba(0,0,0,0.55)",
+          alignItems: "center",
+          gap: "8px 12px",
+          maxWidth: "92%",
         }}
       >
         {active.words.map((word, i) => {
-          const isSpoken = i <= activeWordIdx;
           const isCurrentlySpeaking = i === activeWordIdx;
           const cleaned = cleanWord(word);
           const isKeyword = Object.keys(KEYWORDS).includes(cleaned);
 
-          // Pewarnaan kata
-          let color = "rgba(255, 255, 255, 0.65)";
-          if (isKeyword) {
-            color = KEYWORDS[cleaned];
-          } else if (isSpoken) {
-            color = isCurrentlySpeaking ? THEME.primary : "#FFFFFF";
-          }
-
-          // Efek hentakan kata yang sedang dibaca (Word Pop)
+          // Kata yang sedang dibaca: Berubah menjadi STIKER BALOK KUNING / MERAH teks hitam
+          let badgeBg = "transparent";
+          let badgeColor = "#FFFFFF";
           let wordScale = 1;
+          let rotation = 0;
+
           if (isCurrentlySpeaking) {
             const wordF = Math.max(
               0,
@@ -133,28 +104,55 @@ export const Subtitles: React.FC<Props> = ({ segments, seed = 1 }) => {
               fps,
               config: { damping: 8, stiffness: 220 },
             });
-            wordScale = interpolate(wSpring, [0, 1], [0.92, 1.15]);
+            wordScale = interpolate(wSpring, [0, 1], [0.95, 1.15]);
+
+            if (isKeyword) {
+              badgeBg = THEME.redSticker;
+              badgeColor = "#FFFFFF";
+              rotation = -2;
+            } else {
+              badgeBg = THEME.yellowSticker;
+              badgeColor = "#000000";
+              rotation = 1.5;
+            }
           }
 
           return (
-            <span
+            <div
               key={i}
               style={{
                 display: "inline-block",
-                fontSize: isHook ? 32 : 28,
-                fontWeight: isKeyword || isCurrentlySpeaking ? 900 : 700,
-                fontFamily: FONT.heading,
-                color,
-                transform: `scale(${wordScale})`,
-                textShadow: isSpoken
-                  ? "0 2px 8px rgba(0,0,0,0.95), 0 0 2px #000"
-                  : "0 1px 4px rgba(0,0,0,0.7)",
-                filter: isKeyword && isSpoken ? `drop-shadow(0 0 8px ${color}A0)` : undefined,
-                transition: "color 0.08s ease, transform 0.08s ease",
+                background: badgeBg,
+                borderRadius: badgeBg !== "transparent" ? 8 : 0,
+                padding: badgeBg !== "transparent" ? "4px 12px" : "0 4px",
+                border: badgeBg !== "transparent" ? "2.5px solid #000000" : "none",
+                transform: `scale(${wordScale}) rotate(${rotation}deg)`,
+                boxShadow:
+                  badgeBg !== "transparent"
+                    ? "0 4px 16px rgba(0,0,0,0.7)"
+                    : "none",
+                transition: "transform 0.08s ease",
               }}
             >
-              {word}
-            </span>
+              <span
+                style={{
+                  display: "block",
+                  fontFamily: FONT.heading,
+                  fontSize: 38,
+                  fontWeight: 900,
+                  color: badgeColor,
+                  textTransform: "uppercase",
+                  letterSpacing: 1,
+                  lineHeight: 1.15,
+                  textShadow:
+                    badgeBg === "transparent"
+                      ? "3px 3px 0 #000, -3px -3px 0 #000, 3px -3px 0 #000, -3px 3px 0 #000, 0 6px 16px rgba(0,0,0,0.95)"
+                      : "none",
+                }}
+              >
+                {word}
+              </span>
+            </div>
           );
         })}
       </div>

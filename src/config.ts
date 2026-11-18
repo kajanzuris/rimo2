@@ -12,68 +12,73 @@ export const VIDEO: VideoConfig = {
   voVolume: 1.0,
 };
 
-/** Warna tema default */
+/** Warna tema stiker kontras tinggi (Gaya Viral TikTok / Reels) */
 export const THEME = {
-  primary: "#FFD700",       // kuning emas
-  accent: "#FF4D6D",        // merah-pink
+  // Stiker & Aksen
+  yellowSticker: "#FFD700", // kuning stabilo viral
+  redSticker: "#FF2A4D",    // merah neon (hook / masalah)
+  whiteSticker: "#FFFFFF",  // putih kontras
+  blackText: "#000000",
+  whiteText: "#FFFFFF",
+  
+  // Aksen dinamis
+  primary: "#FFD700",
+  accent: "#FF2A4D",
   text: "#FFFFFF",
-  textShadow: "0 2px 8px rgba(0,0,0,0.8)",
-  glass: "rgba(0, 0, 0, 0.55)",
-  glassBorder: "rgba(255, 255, 255, 0.2)",
-  glassBlur: 14,
+  
+  // Progress & Partikel
   progressBar: "#FFD700",
-  progressBg: "rgba(255, 255, 255, 0.2)",
+  progressBg: "rgba(255, 255, 255, 0.25)",
   particle: "#FFD700",
 };
 
 /** Palet warna dinamis per seed */
 export const PALETTES = [
-  { primary: "#FFD700", accent: "#FF4D6D", progressBar: "#FFD700", particle: "#FFD700" }, // Emas & Pink
-  { primary: "#00E5FF", accent: "#FF2A6D", progressBar: "#00E5FF", particle: "#00E5FF" }, // Cyan Neon
-  { primary: "#00FF88", accent: "#FFD700", progressBar: "#00FF88", particle: "#00FF88" }, // Mint Enerjik
-  { primary: "#FF70A6", accent: "#FFD700", progressBar: "#FF70A6", particle: "#FF70A6" }, // Pink Pastel
-  { primary: "#FF9F1C", accent: "#2EC4B6", progressBar: "#FF9F1C", particle: "#FF9F1C" }, // Sunset Orange
+  { primary: "#FFD700", accent: "#FF2A4D", progressBar: "#FFD700", particle: "#FFD700" }, // Kuning & Merah (Klasik Viral)
+  { primary: "#00E5FF", accent: "#FF2A4D", progressBar: "#00E5FF", particle: "#00E5FF" }, // Cyan & Merah
+  { primary: "#00FF88", accent: "#FFD700", progressBar: "#00FF88", particle: "#00FF88" }, // Mint & Kuning
+  { primary: "#FF9F1C", accent: "#FF2A4D", progressBar: "#FF9F1C", particle: "#FF9F1C" }, // Orange & Merah
 ];
 
 /** Kata kunci auto-highlight untuk berbagai kategori video */
 export const KEYWORDS: Record<string, string> = {
-  // Masalah / Attention Grabbers (Merah/Pink)
-  mampet: "#FF4D6D",
-  bau: "#FF4D6D",
-  kotor: "#FF4D6D",
-  rusak: "#FF4D6D",
-  capek: "#FF4D6D",
-  ribet: "#FF4D6D",
-  mahal: "#FF4D6D",
-  bahaya: "#FF4D6D",
-  susah: "#FF4D6D",
+  // Masalah / Attention Grabbers (Stiker Merah)
+  mampet: "#FF2A4D",
+  bau: "#FF2A4D",
+  kotor: "#FF2A4D",
+  rusak: "#FF2A4D",
+  sempit: "#FF2A4D",
+  numpuk: "#FFD700",
+  capek: "#FF2A4D",
+  ribet: "#FF2A4D",
+  mahal: "#FF2A4D",
+  bahaya: "#FF2A4D",
+  susah: "#FF2A4D",
 
-  // Solusi & Keunggulan (Mint / Cyan / Gold)
+  // Solusi & Keunggulan (Stiker Kuning / Hijau / Cyan)
   bersih: "#00FF88",
   hemat: "#00FF88",
   gratis: "#00FF88",
   praktis: "#00FF88",
   rapi: "#00FF88",
   mudah: "#00FF88",
+  pasang: "#00E5FF",
   estetik: "#00E5FF",
   viral: "#00E5FF",
   rekomendasi: "#00E5FF",
   wajib: "#FFD700",
-  keren: "#00E5FF",
-  canggih: "#00E5FF",
 
-  // Call-To-Action & Promo (Gold / Red)
+  // Call-To-Action & Promo
   diskon: "#FFD700",
   promo: "#FFD700",
   checkout: "#FFD700",
   beli: "#FFD700",
-  sekarang: "#FF4D6D",
+  sekarang: "#FF2A4D",
   murah: "#FFD700",
-  bonus: "#00FF88",
 };
 
-/** Tipografi */
+/** Tipografi: Impact / Arial Black tebal padat ala CapCut/TikTok */
 export const FONT = {
-  heading: "Inter, system-ui, -apple-system, sans-serif",
-  body: "Inter, system-ui, -apple-system, sans-serif",
+  heading: "Impact, 'Arial Black', sans-serif",
+  body: "Impact, 'Arial Black', sans-serif",
 };
